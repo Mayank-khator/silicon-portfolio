@@ -1,0 +1,149 @@
+name: silicon-portfolio
+
+# Supabase CLI owns the local PostgreSQL/Auth/REST/Realtime Docker stack.
+# Start `supabase start` in this repository before connected mode, then use the
+# loopback API keys from `supabase status`. Hosted Supabase is also supported.
+x-api: &api
+  build:
+    context: .
+    dockerfile: services/Dockerfile
+  environment: &api-env
+    SUPABASE_URL: ${SUPABASE_URL:-http://host.docker.internal:54321}
+    SUPABASE_PUBLISHABLE_KEY: ${SUPABASE_PUBLISHABLE_KEY:-}
+    CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:3000,http://127.0.0.1:3000}
+  extra_hosts: ['host.docker.internal:host-gateway']
+  restart: unless-stopped
+  security_opt: ['no-new-privileges:true']
+  cap_drop: [ALL]
+  read_only: true
+  tmpfs: [/tmp]
+  networks: [application]
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+      args:
+        NEXT_PUBLIC_DATA_MODE: ${NEXT_PUBLIC_DATA_MODE:-demo}
+        NEXT_PUBLIC_SUPABASE_URL: ${NEXT_PUBLIC_SUPABASE_URL:-}
+        NEXT_PUBLIC_SUPABASE_ANON_KEY: ${NEXT_PUBLIC_SUPABASE_ANON_KEY:-}
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8000}
+    ports: ['127.0.0.1:3000:8080']
+    restart: unless-stopped
+    security_opt: ['no-new-privileges:true']
+    cap_drop: [ALL]
+    networks: [application]
+
+  kong:
+    image: kong:3.9
+    environment:
+      KONG_DATABASE: 'off'
+      KONG_DECLARATIVE_CONFIG: /kong/kong.yml
+      KONG_PROXY_LISTEN: 0.0.0.0:8000
+      KONG_ADMIN_LISTEN: 'off'
+      KONG_STATUS_LISTEN: 127.0.0.1:8100
+      KONG_PROXY_ACCESS_LOG: 'off'
+      KONG_PROXY_ERROR_LOG: /dev/stderr
+      KONG_PREFIX: /tmp/kong
+    volumes: ['./infra/kong/kong.yml:/kong/kong.yml:ro']
+    ports: ['127.0.0.1:8000:8000']
+    depends_on:
+      user-service: {condition: service_healthy}
+      project-npi-service: {condition: service_healthy}
+      resource-time-service: {condition: service_healthy}
+      agentic-ai-service: {condition: service_healthy}
+    healthcheck:
+      test: ['CMD', 'kong', 'health']
+      interval: 20s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    security_opt: ['no-new-privileges:true']
+    networks: [application]
+
+  user-service:
+    <<: *api
+    environment:
+      <<: *api-env
+      SERVICE_MODULE: services.user.app:app
+
+  project-npi-service:
+    <<: *api
+    environment:
+      <<: *api-env
+      SERVICE_MODULE: services.project_npi.app:app
+
+  resource-time-service:
+    <<: *api
+    environment:
+      <<: *api-env
+      SERVICE_MODULE: services.resource_time.app:app
+
+  agentic-ai-service:
+    <<: *api
+    build:
+      context: .
+      dockerfile: services/Dockerfile
+      args: {ENABLE_LLM: '${ENABLE_LLM:-false}'}
+    environment:
+      <<: *api-env
+      SERVICE_MODULE: services.agentic_ai.app:app
+      LLM_PROVIDER: ${LLM_PROVIDER:-none}
+      LLM_MODEL: ${LLM_MODEL:-}
+      OLLAMA_BASE_URL: http://ollama:11434
+      ALLOW_EXTERNAL_LLM: ${ALLOW_EXTERNAL_LLM:-false}
+      GROQ_API_KEY: ${GROQ_API_KEY:-}
+
+  rabbitmq:
+    image: rabbitmq:4.1-management-alpine
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-silicon}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD:?Set RABBITMQ_PASSWORD in .env}
+    volumes: [rabbit-data:/var/lib/rabbitmq]
+    ports: ['127.0.0.1:15672:15672']
+    healthcheck:
+      test: ['CMD', 'rabbitmq-diagnostics', '-q', 'ping']
+      interval: 20s
+      timeout: 10s
+      retries: 5
+    restart: unless-stopped
+    networks: [application]
+
+  outbox-worker:
+    <<: *api
+    profiles: [workers]
+    command: ['python', '-m', 'services.worker.outbox']
+    environment:
+      SUPABASE_URL: ${SUPABASE_URL:-http://host.docker.internal:54321}
+      SUPABASE_SERVICE_ROLE_KEY: ${SUPABASE_SERVICE_ROLE_KEY:-}
+      RABBITMQ_URL: amqp://${RABBITMQ_USER:-silicon}:${RABBITMQ_PASSWORD}@rabbitmq:5672/
+    depends_on:
+      rabbitmq: {condition: service_healthy}
+    healthcheck: {disable: true}
+
+  weekly-report-worker:
+    <<: *api
+    profiles: [workers]
+    command: ['python', '-m', 'services.worker.weekly_reports']
+    environment:
+      SUPABASE_URL: ${SUPABASE_URL:-http://host.docker.internal:54321}
+      SUPABASE_SERVICE_ROLE_KEY: ${SUPABASE_SERVICE_ROLE_KEY:-}
+      WEEKLY_REPORT_TARGETS: ${WEEKLY_REPORT_TARGETS:-}
+      WEEKLY_REPORT_HOUR_UTC: ${WEEKLY_REPORT_HOUR_UTC:-8}
+      WEEKLY_REPORT_POLL_SECONDS: ${WEEKLY_REPORT_POLL_SECONDS:-300}
+    healthcheck: {disable: true}
+
+  ollama:
+    image: ollama/ollama:0.12.3
+    profiles: [local-ai]
+    environment: {OLLAMA_NO_CLOUD: '1'}
+    volumes: [ollama-data:/root/.ollama]
+    restart: unless-stopped
+    networks: [application]
+
+networks:
+  application: {driver: bridge}
+volumes:
+  rabbit-data:
+  ollama-data:

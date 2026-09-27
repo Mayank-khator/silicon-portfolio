@@ -1,0 +1,6 @@
+/.temp/
+/.branches/
+/tests/node_modules/
+__pycache__/
+*.pyc
+

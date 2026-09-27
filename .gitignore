@@ -1,0 +1,17 @@
+node_modules/
+.next/
+out/
+.env
+.env.*
+!.env.example
+__pycache__/
+.pytest_cache/
+.venv/
+*.pyc
+*.tsbuildinfo
+.sites-runtime/
+.artifacts/
+supabase/.temp/
+supabase/.branches/
+*.tar.gz
+*.log

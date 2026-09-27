@@ -1,0 +1,37 @@
+_format_version: '3.0'
+_transform: true
+services:
+  - name: user-service
+    url: http://user-service:8000
+    routes:
+      - name: user-api
+        paths: [/api/me]
+        strip_path: false
+  - name: project-npi-service
+    url: http://project-npi-service:8000
+    routes:
+      - name: project-api
+        paths: [/api/projects, /api/tasks, /api/demands]
+        strip_path: false
+  - name: resource-time-service
+    url: http://resource-time-service:8000
+    routes:
+      - name: resource-api
+        paths: [/api/resources, /api/allocations, /api/time-entries]
+        strip_path: false
+  - name: agentic-ai-service
+    url: http://agentic-ai-service:8000
+    routes:
+      - name: agent-api
+        paths: [/api/insights, /api/reports]
+        strip_path: false
+plugins:
+  - name: rate-limiting
+    config:
+      minute: 180
+      policy: local
+      limit_by: ip
+      hide_client_headers: false
+  - name: request-size-limiting
+    config:
+      allowed_payload_size: 1

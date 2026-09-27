@@ -1,0 +1,4 @@
+# Optional; not installed in the default image. No provider calls by default.
+langchain-core==1.6.5
+langchain-ollama==1.1.0
+langchain-groq==1.1.3

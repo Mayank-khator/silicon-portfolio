@@ -1,0 +1,8 @@
+{
+  "name": "silicon-ppm-database-tests",
+  "private": true,
+  "type": "module",
+  "scripts": { "test": "node run.mjs" },
+  "devDependencies": { "@electric-sql/pglite": "0.3.14" }
+}
+
