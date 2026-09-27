@@ -55,6 +55,7 @@ silicon-ppm/
 │       └── default.conf
 ├── scripts/
 │   ├── collect-licenses.mjs
+│   ├── prepare-hosting.mjs
 │   └── preview.mjs
 ├── services/
 │   ├── agentic_ai/
