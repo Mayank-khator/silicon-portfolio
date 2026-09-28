@@ -1,0 +1,78 @@
+name: Publish synthetic demo to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      pages: read
+    env:
+      BASE_PATH: /silicon-portfolio
+      NEXT_TELEMETRY_DISABLED: '1'
+      NEXT_PUBLIC_DATA_MODE: demo
+      NEXT_PUBLIC_API_URL: ''
+      NEXT_PUBLIC_SUPABASE_URL: ''
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: ''
+      NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ''
+      SUPABASE_URL: ''
+      SUPABASE_ANON_KEY: ''
+      SUPABASE_PUBLISHABLE_KEY: ''
+      SUPABASE_SERVICE_ROLE_KEY: ''
+      API_URL: ''
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          package-manager-cache: false
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v6
+        with:
+          version: 11.19.0
+          cache: true
+          run_install: false
+      - name: Install locked dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+      - name: Test frontend domain behavior
+        run: pnpm test
+      - name: Build static synthetic demo
+        run: pnpm build:pages
+      - name: Upload static export
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: apps/web/out
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy Pages artifact
+        id: deployment
+        uses: actions/deploy-pages@v4

@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev apps/web --hostname 127.0.0.1",
     "build": "next build apps/web",
+    "build:pages": "node scripts/build-pages.mjs",
     "typecheck": "tsc --noEmit -p apps/web/tsconfig.json",
     "test": "tsx --test tests/frontend/*.test.ts",
     "preview": "node scripts/preview.mjs"

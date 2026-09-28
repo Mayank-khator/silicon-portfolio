@@ -7,7 +7,7 @@ it does not assert that Supabase, PostgreSQL or RabbitMQ is reachable.
 ```powershell
 python -m venv services/.venv
 services/.venv/Scripts/python -m pip install -r services/requirements-dev.txt
-services/.venv/Scripts/python -m pytest tests/backend -q
+services/.venv/Scripts/python -m pytest -q
 $env:SUPABASE_URL = 'http://127.0.0.1:54321'
 $env:SUPABASE_PUBLISHABLE_KEY = '<local public/anon key>'
 services/.venv/Scripts/python -m uvicorn services.project_npi.app:app --port 8002
@@ -46,6 +46,7 @@ Tenant IDs select a scope; they do not establish permission to access it.
 | `/api/projects`, `/api/tasks`, `/api/demands` | GET, POST |
 | `/api/projects/{id}`, `/api/tasks/{id}`, `/api/demands/{id}` | PATCH |
 | `/api/resources`, `/api/allocations`, `/api/time-entries` | GET, POST |
+| `/api/resources/{id}`, `/api/allocations/{id}` | PATCH |
 | `/api/time-entries/{id}` | PATCH |
 | `/api/insights?tenant_id=...` | GET; returns `{insights, source, historical_sample_count, human_review_required}` |
 | `/api/reports` | POST `{tenant_id, report_type, use_llm}`; returns report JSON |
@@ -63,6 +64,15 @@ version or a write filtered away by concurrent changes returns HTTP 409; refresh
 and resolve before retrying. A missing/inaccessible record returns 404; invalid
 input or a database invariant returns 422; role denial returns 403. Raw database
 errors and tokens are never included in API errors.
+
+Resource PATCH accepts `name`, `role` (job title), `skills`, `fab_nodes` and
+`weekly_capacity`. Allocation PATCH accepts `resource_id`, `project_id`,
+`hours_per_week`, `start_date` and `end_date`. Weekly capacity and allocated hours
+must be positive and at most 168. Empty skill/node arrays clear those values;
+explicit nulls and client-written ownership/approval fields are rejected. To end
+an allocation, shorten its end date while keeping it on or after its start date.
+Past end dates are accepted. Database RLS and relationship constraints still
+authorize changes and reject invalid or cross-tenant reassignment.
 
 Projects start at Ideation. Advancing requires the next sequential phase. Entering
 DVT, PVT and Ramp/Launch requires design freeze approval. A permitted reviewer

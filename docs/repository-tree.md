@@ -1,9 +1,12 @@
 # Repository map
 
-Generated source/configuration tree. Dependencies, virtual environments, private environment files and build output are excluded.
+Source/configuration tree. Dependencies, private environment files and generated build output are excluded.
 
 ```text
 silicon-ppm/
+├── .github/
+│   └── workflows/
+│       └── pages.yml
 ├── .openai/
 │   └── hosting.json
 ├── apps/
@@ -19,10 +22,14 @@ silicon-ppm/
 │       │   ├── connected-insights.tsx
 │       │   ├── dashboard.tsx
 │       │   ├── gantt.tsx
+│       │   ├── planning-dialogs.tsx
+│       │   ├── workspace-settings.tsx
 │       │   └── workspace.tsx
 │       ├── lib/
 │       │   ├── connected-data.ts
 │       │   ├── domain.ts
+│       │   ├── gantt-range.ts
+│       │   ├── local-workspaces.ts
 │       │   ├── seed.ts
 │       │   ├── use-portfolio.ts
 │       │   └── utils.ts
@@ -54,6 +61,7 @@ silicon-ppm/
 │   └── nginx/
 │       └── default.conf
 ├── scripts/
+│   ├── build-pages.mjs
 │   ├── collect-licenses.mjs
 │   ├── prepare-hosting.mjs
 │   └── preview.mjs
@@ -76,6 +84,8 @@ silicon-ppm/
 │   │   ├── domain.py
 │   │   ├── models.py
 │   │   └── supabase.py
+│   ├── tests/
+│   │   └── test_resource_edits.py
 │   ├── user/
 │   │   ├── __init__.py
 │   │   └── app.py
@@ -112,7 +122,9 @@ silicon-ppm/
 │   │   └── test_worker.py
 │   └── frontend/
 │       ├── connected-data.test.ts
-│       └── domain.test.ts
+│       ├── domain.test.ts
+│       ├── gantt-range.test.ts
+│       └── local-workspaces.test.ts
 ├── .dockerignore
 ├── .env.example
 ├── .gitignore

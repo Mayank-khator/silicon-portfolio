@@ -121,12 +121,28 @@ class ResourceCreate(TenantModel):
     weekly_capacity: Annotated[float, Field(gt=0, le=168)] = 40
 
 
+class ResourcePatch(PatchBase):
+    name: Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=160)] | None = None
+    role: Text | None = None
+    skills: Annotated[list[Text], Field(max_length=100)] | None = None
+    fab_nodes: Annotated[list[Text], Field(max_length=30)] | None = None
+    weekly_capacity: Annotated[float, Field(gt=0, le=168)] | None = None
+
+
 class AllocationCreate(TenantModel):
     resource_id: UUID
     project_id: UUID
     hours_per_week: Annotated[float, Field(gt=0, le=168)]
     start_date: date
     end_date: date
+
+
+class AllocationPatch(PatchBase):
+    resource_id: UUID | None = None
+    project_id: UUID | None = None
+    hours_per_week: Annotated[float, Field(gt=0, le=168)] | None = None
+    start_date: date | None = None
+    end_date: date | None = None
 
 
 class TimeEntryCreate(TenantModel):

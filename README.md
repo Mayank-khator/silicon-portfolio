@@ -2,17 +2,22 @@
 
 An original semiconductor New Product Introduction portfolio and time-tracking application. Next.js management demo plus four authenticated FastAPI services, Supabase PostgreSQL/Auth/Realtime, Kong and RabbitMQ. Common PPM workflows are implemented independently; this project is not affiliated with Sciforma and does not claim full product parity or compliance certification.
 
+**Public source:** [Mayank-khator/silicon-portfolio](https://github.com/Mayank-khator/silicon-portfolio). The user explicitly authorized public source visibility, including the backend source.
+
+**Expected GitHub Pages demo:** [Silicon Portfolio](https://mayank-khator.github.io/silicon-portfolio/). Pages is enabled; the first push/deployment is not yet confirmed. See the [deployment record](docs/deployment.md).
+
 ## What you can demonstrate
 
 - Executive dashboard: live-derived budget/spend, weighted expected return, health, strategic alignment and milestones.
-- NPI projects: Ideation → Feasibility → EVT → DVT → PVT → Ramp/Launch; searchable portfolio, editable Gantt roadmap, task Kanban, sequential phase gates and design freeze.
+- Workspaces and profile: switch local workspaces, create a sample or empty workspace, and edit the local display profile.
+- NPI projects: Ideation → Feasibility → EVT → DVT → PVT → Ramp/Launch; searchable portfolio, editable Gantt roadmap, task creation/editing and Kanban, sequential phase gates and design freeze.
 - Demand funnel: IC design proposals, tape-out requests and fab capacity requests with review and approval.
-- Capacity: specialized engineering skills/fab nodes, date-active allocations, availability and over-allocation warnings.
+- Capacity: create/edit engineering resources and project allocations, review skills/fab nodes, date-active availability and over-allocation warnings.
 - Timesheets: project/task/phase mapping, billable/non-billable hours and submission.
-- Portfolio agent: overlapping-allocation analysis, historical EVT/DVT delay comparisons, on-demand reports, and a Monday UTC draft-report worker. LangChain/Ollama/Groq are optional; deterministic calculations run without an API bill.
-- Connected mode: authenticated tenants, database RBAC, audit trail and Realtime refetches.
+- Demo insights: deterministic capacity calculations and on-demand draft reports. Historical-delay analysis, optional LangChain/Ollama/Groq narratives, and the Monday UTC report worker are included in the backend source and require a running connected deployment.
+- Connected mode source: authenticated tenants, database RBAC, audit trail and Realtime refetches; this infrastructure has not been provisioned for Pages.
 
-**The published management demo uses fictional data and browser-local storage. Each visitor has an independent copy. It does not run the microservice stack, shared database, production audit controls, or an LLM.** Changes synchronize between tabs in the same browser, not between people. Use Reset demo in the sidebar to restore the samples. Do not enter confidential information in the public demo.
+**The Pages build is an interactive application using fictional data and browser-local storage. Each visitor has an independent copy.** Workspace/profile edits, task creation, resource/allocation edits and other demo changes persist in that browser and synchronize across its tabs. These actions do not create shared accounts, cloud workspaces or server records. Reset demo restores samples in the current workspace; other workspaces remain intact. Pages does not run the microservices, shared database, authentication service, production audit controls, weekly worker, or an LLM. Do not enter confidential information.
 
 ## Quick start: standalone demo
 
@@ -159,9 +164,19 @@ Docker Engine, Supabase CLI and a live Supabase project were not available on th
 
 ## Publishing and cost boundaries
 
-The first synthetic demo is hosted using the available Sites publishing connection; see [deployment record](docs/deployment.md) for its confirmed link and repository. The source remains portable. For Cloudflare Pages, connect the private GitHub repository, use `pnpm install --frozen-lockfile && pnpm build`, and publish `apps/web/out`. Set `NEXT_PUBLIC_DATA_MODE=demo` and no secrets. Access permissions and provider terms still apply.
+GitHub is the selected source and hosting provider. The [Pages workflow](.github/workflows/pages.yml) runs after pushes to `main` or a manual run on `main`: it installs the locked dependencies with Node.js 24/pnpm 11.19.0, tests the frontend, runs `pnpm build:pages`, and publishes `apps/web/out` through GitHub Pages. The build forces demo mode, clears API/Supabase connection settings, writes `.nojekyll`, and sets the project path to `/silicon-portfolio`. A normal `pnpm build` still exports for `/`.
 
-The demo needs no paid database, AI key, or always-on service. No paid services were provisioned. Free tiers have quotas and can change; the complete microservice infrastructure, availability commitments, compliant audit retention and operational controls cannot be guaranteed at zero cost. Vercel Hobby is not suitable for commercial use; GitHub Pages has commercial/SaaS restrictions. See the cited hosting comparison before choosing a business host.
+To preview the Pages build locally in PowerShell:
+
+```powershell
+pnpm build:pages
+$env:BASE_PATH = '/silicon-portfolio'
+pnpm preview
+```
+
+Open [the local project path](http://127.0.0.1:3000/silicon-portfolio/). Unset `BASE_PATH` before previewing a normal root-path build. See [deployment instructions and status](docs/deployment.md).
+
+The public repository permits the GitHub Free Pages route; private-source Pages requires an eligible paid plan. This is a synthetic project showcase. Pages restricts commercial SaaS/business hosting, so converting it into a business service needs a fresh hosting review. [GitHub Pages limits](https://docs.github.com/en/pages/getting-started-with-github-pages/github-pages-limits). No paid infrastructure was provisioned. Backend hosting, operational controls and availability commitments remain separate from this static demo.
 
 ## Security, ownership and legal use
 

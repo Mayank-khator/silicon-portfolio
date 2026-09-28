@@ -1,26 +1,48 @@
-# Deployment record — 2026-09-27
+# GitHub deployment record — 2026-09-28
 
-**Public management demo:** [Silicon Portfolio](https://silicon-portfolio-npi-2026.khatormayank94.chatgpt.site)
+**Public repository:** [Mayank-khator/silicon-portfolio](https://github.com/Mayank-khator/silicon-portfolio). Public visibility of the full source, including services and database migrations, was explicitly authorized by the user.
 
-Sites reported deployment `appgdep_6ab90e7aa04c819185c5d5aac4e728b7` succeeded at 12:40 UTC. The user explicitly approved access for anyone with the link. The published static artifact was packaged from source commit `b6c5189123c664848daed8163eee3f01b650a503`; later documentation-only commits record this deployment.
+**Expected Pages URL:** [Silicon Portfolio](https://mayank-khator.github.io/silicon-portfolio/). **Pages is enabled; the first push/deployment is not yet confirmed.** This is the configured project-site address, not a confirmed-live deployment. GitHub documents project URLs in this owner/repository format. [GitHub Pages overview](https://docs.github.com/en/pages/getting-started-with-github-pages/what-is-github-pages).
 
-The public site includes only synthetic data. Each browser has independent local storage; this is not a shared or authenticated enterprise deployment. No real IP, employee timesheets, service-role key, cloud LLM key or backend service is included in the hosted artifact. No paid infrastructure was provisioned. Hosting remains subject to the account's Sites availability/terms; Cloudflare Pages is documented as a portable free-tier option.
+## What the Pages artifact runs
 
-## GitHub status
+The static frontend is interactive: visitors can switch workspaces, create sample or empty workspaces, edit their local display profile, create/edit projects and tasks, edit engineering resources and allocations, record time, and generate deterministic draft reports. Each workspace is saved in that browser's local storage; changes synchronize between its tabs. Other visitors and devices have separate data. Clearing browser storage removes those local records.
 
-Authenticated account: `Mayank-khator`. Target: a **private** repository named `silicon-portfolio`.
+Pages serves HTML, CSS and JavaScript. The public repository also contains the full FastAPI, Supabase, Kong, RabbitMQ and optional AI/worker source, but **Pages does not run those services**. Shared persistence, real sign-in/authorization, backend audit enforcement, live historical analysis, weekly report scheduling and model inference still need a separately provisioned connected environment. No backend, database or AI deployment is provisioned by this Pages workflow.
 
-Both GitHub GraphQL and REST rejected creation with `Resource not accessible by personal access token` / HTTP 403. No GitHub repository was created or pushed. The local repository is committed and ready. Create an empty private repository without a README, grant the CLI token access to it with Contents read/write, then run:
+Use fictional data only. Profile editing is a local demo preference, not identity verification. Creating a demo workspace does not provision a tenant or invite collaborators. No paid service or subscription change is part of this delivery.
+
+## Automatic publishing
+
+The repository's [Pages workflow](../.github/workflows/pages.yml) runs on pushes to `main` and manual dispatch on `main`. Repository Settings → Pages uses **GitHub Actions** as the publishing source. The workflow:
+
+1. Uses Node.js 24 and pnpm 11.19.0, installs from the frozen lockfile and runs the frontend tests.
+2. Runs `pnpm build:pages`, which forces synthetic demo mode and clears API/Supabase environment settings.
+3. Exports `apps/web/out` for `/silicon-portfolio` and adds `.nojekyll`.
+4. Uploads only that static export and deploys it through the `github-pages` environment.
+
+Use the [workflow runs](https://github.com/Mayank-khator/silicon-portfolio/actions/workflows/pages.yml) to inspect publishing results. Record the successful run, deployed commit and verified URL here when deployment verification finishes. A successful local build alone does not establish that Pages has published it.
+
+## Reproduce the project-path build
+
+From the repository root:
 
 ```sh
-git remote add origin https://github.com/Mayank-khator/silicon-portfolio.git
-git push -u origin main
+pnpm install --frozen-lockfile
+pnpm build:pages
 ```
 
-If `origin` already exists, inspect it rather than adding or replacing it blindly. A private repository link is only accessible to authorized collaborators. Do not make the code public without reviewing employer/IP ownership.
+PowerShell preview:
 
-## Rebuild and republish
+```powershell
+$env:BASE_PATH = '/silicon-portfolio'
+pnpm preview
+```
 
-`pnpm build` creates `apps/web/out`. The Sites adapter `node scripts/prepare-hosting.mjs` copies that verified export into root `out/`, an allowed Sites static root. Both directories are generated and Git-ignored. `.openai/hosting.json` retains the existing Site identity; reuse it instead of creating a second Site.
+Open [localhost project preview](http://127.0.0.1:3000/silicon-portfolio/). On POSIX shells use `BASE_PATH=/silicon-portfolio pnpm preview`. `BASE_PATH` can be overridden for another project path; it must match the deployed URL. `pnpm build` uses `/` unless explicitly run in Pages mode, so unset `BASE_PATH` for its local preview.
 
-On this Windows machine, the Sites packaging helper requires Git Bash on PATH and GNU tar's `TAR_OPTIONS=--force-local` when the archive uses a drive-letter path. Source credentials are temporary and must be passed through stdin; never store them in this repository. Publishing uploads only the static archive, not the service code or environment files.
+GitHub Free supports Pages from public repositories; private-source Pages requires an eligible paid plan. The authorized public repository avoids a paid-plan change. The current artifact is a synthetic project showcase; GitHub's commercial/SaaS restrictions still apply. [Pages limits](https://docs.github.com/en/pages/getting-started-with-github-pages/github-pages-limits). See [legal and hosting notes](legal-and-hosting.md) and [verification](verification.md) for scope and remaining checks.
+
+## Superseded preview
+
+The [27 September Sites preview](https://silicon-portfolio-npi-2026.khatormayank94.chatgpt.site) is historical and is no longer the primary delivery or publishing target. It may contain an older build. Current work is directed to GitHub Pages; this record does not claim the previous host was deleted or disabled.
