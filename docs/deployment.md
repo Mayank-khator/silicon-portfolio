@@ -2,7 +2,9 @@
 
 **Public repository:** [Mayank-khator/silicon-portfolio](https://github.com/Mayank-khator/silicon-portfolio). Public visibility of the full source, including services and database migrations, was explicitly authorized by the user.
 
-**Expected Pages URL:** [Silicon Portfolio](https://mayank-khator.github.io/silicon-portfolio/). **Pages is enabled; the first push/deployment is not yet confirmed.** This is the configured project-site address, not a confirmed-live deployment. GitHub documents project URLs in this owner/repository format. [GitHub Pages overview](https://docs.github.com/en/pages/getting-started-with-github-pages/what-is-github-pages).
+**Verified live Pages URL:** [Silicon Portfolio](https://mayank-khator.github.io/silicon-portfolio/). Public access and HTTPS are enabled; no GitHub login is required to view the app. [GitHub Pages overview](https://docs.github.com/en/pages/getting-started-with-github-pages/what-is-github-pages).
+
+The [first deployment run](https://github.com/Mayank-khator/silicon-portfolio/actions/runs/36403749690) completed successfully at 09:29 UTC on 28 September 2026. It deployed application commit `5bb222373bc78d69ffc8c49647688b3fe895e087`. A subsequent documentation-only commit records this result. Browser verification loaded the public dashboard and opened both the workspace selector and profile dialog without console errors.
 
 ## What the Pages artifact runs
 
@@ -21,7 +23,7 @@ The repository's [Pages workflow](../.github/workflows/pages.yml) runs on pushes
 3. Exports `apps/web/out` for `/silicon-portfolio` and adds `.nojekyll`.
 4. Uploads only that static export and deploys it through the `github-pages` environment.
 
-Use the [workflow runs](https://github.com/Mayank-khator/silicon-portfolio/actions/workflows/pages.yml) to inspect publishing results. Record the successful run, deployed commit and verified URL here when deployment verification finishes. A successful local build alone does not establish that Pages has published it.
+Use the [workflow runs](https://github.com/Mayank-khator/silicon-portfolio/actions/workflows/pages.yml) to inspect publishing results. Future application changes pushed to `main` use the same deployment workflow. Documentation-only commits may use `[skip ci]` to retain the currently verified artifact.
 
 ## Reproduce the project-path build
 

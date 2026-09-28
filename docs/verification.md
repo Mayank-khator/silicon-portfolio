@@ -23,7 +23,9 @@ The Pages-specific production build and TypeScript compilation pass at `/silicon
 
 Browser checks on the updated static export verified workspace creation with an empty portfolio, switching back to the unchanged six-program sample portfolio, profile editing and persistence across reload/new tab, project creation, task creation and board display, a 2028 roadmap, adding an engineer, allocating 48 hours then editing to 32 hours (overload resolved), and preserving zero budget/ROI/alignment and a 2nm node when reopening a project. The profile dialog fits a 390px viewport without horizontal page overflow. No app console errors were observed in the final preview. A local preview process stopped between user turns and was restarted; this was not a hosted-app failure.
 
-The SQL and dependency audit results above were established on 2026-09-27; this UI/API update did not change the migration or dependency versions. Public-host deployment status is recorded separately in `deployment.md`.
+Time creation/submission, report preview and activity history also passed in the release build. The GitHub Actions build/deploy succeeded and the public Pages dashboard, workspace selector and profile dialog were verified without app console errors. Deployment evidence is in `deployment.md`.
+
+The SQL and dependency audit results above were established on 2026-09-27; this UI/API update did not change the migration or dependency versions.
 
 ## Not established by these checks
 

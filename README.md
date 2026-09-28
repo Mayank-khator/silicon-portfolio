@@ -4,11 +4,11 @@ An original semiconductor New Product Introduction portfolio and time-tracking a
 
 **Public source:** [Mayank-khator/silicon-portfolio](https://github.com/Mayank-khator/silicon-portfolio). The user explicitly authorized public source visibility, including the backend source.
 
-**Expected GitHub Pages demo:** [Silicon Portfolio](https://mayank-khator.github.io/silicon-portfolio/). Pages is enabled; the first push/deployment is not yet confirmed. See the [deployment record](docs/deployment.md).
+**Live GitHub Pages app:** [Silicon Portfolio](https://mayank-khator.github.io/silicon-portfolio/). Public, HTTPS, no login required. Deployment and the workspace/profile controls were verified on 28 September 2026. See the [deployment record](docs/deployment.md).
 
 ## What you can demonstrate
 
-- Executive dashboard: live-derived budget/spend, weighted expected return, health, strategic alignment and milestones.
+- Executive dashboard: budget/spend, weighted expected return, health, strategic alignment and milestones calculated from saved workspace data.
 - Workspaces and profile: switch local workspaces, create a sample or empty workspace, and edit the local display profile.
 - NPI projects: Ideation → Feasibility → EVT → DVT → PVT → Ramp/Launch; searchable portfolio, editable Gantt roadmap, task creation/editing and Kanban, sequential phase gates and design freeze.
 - Demand funnel: IC design proposals, tape-out requests and fab capacity requests with review and approval.
